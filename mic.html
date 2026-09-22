@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <style> 
+    body{
+        background-color: black;
+    }
+    .mic-icon{
+       background-color:grey;
+       padding:10px;
+       border-radius: 50%;
+       width: 30px;
+       border:hidden;
+    }
+    .mic-icon:hover{
+        background-color: ivory;
+    }
+    .container{
+        display:flex;
+        align-items:center;
+        justify-content: center;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input id="textInput">
+        <button id="mic-icon" class="mic-icon">
+            <i class="bi bi-mic-fill"></i>
+        </button>
+
+    
+    </div>
+    <p id="status"></p>
+    <script>
+        const micBtn=document.getElementById("mic-icon");
+        const textInput=document.getElementById("textInput");
+        const status=document.getElementById("status");
+        const SpeechRecognition=
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition){
+           status.textContent="speech is not support";
+        }
+        else{
+            const recognition=new SpeechRecognition();
+
+            recognition.lang="en-US";
+            recognition.continuous=false;
+            recognition.interimResults=false;
+
+            micBtn.addEventListener("click",() => {
+                recognition.start();
+
+                micBtn.classList.add("listening");
+                status.textContent="Listening...";
+            });
+
+            recognition.onresult=(event) => {
+                const speechText=event.results[0][0].transcript;
+                textInput.value=speechText;
+                status.textContent="Done";
+
+            };
+            recognition.onend=() => {
+                micBtn.classList.remove("listening");
+            };
+
+            recognition.onerror=(event) => {
+                micBtn.classList.remove("listening");
+                status.textContent="Error"+event.error;
+            };
+        }
+    </script>
+</body>
+</html>
